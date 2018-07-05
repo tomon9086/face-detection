@@ -1,6 +1,6 @@
 # Face detection in Python
 ## Usage
-	```shell=
+	```shell
 	$ pip install -r requirements.txt
 	$ python index.py
 	```
