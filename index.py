@@ -2,7 +2,6 @@ import os
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
-# %matplotlib inline
 
 def facedetect(file):
 	haarcascades = os.path.join(os.environ["HOME"], "/.pyenv/versions/3.6.5/lib/python3.6/site-packages/cv2/data/")
@@ -14,6 +13,19 @@ def facedetect(file):
 		cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 2)
 	plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
 	plt.show()
+
+def lookat(img, direction):
+	x = direction[0]
+	y = direction[1]
+	cv2.rectangle(img, (0, 0), (200, 200), (255, 255, 255), -1)
+	cv2.circle(img, (100, 100), 70, (157, 203, 253), -1)
+	cv2.circle(img, (65, 90), 20, (0, 0, 0), -1)
+	cv2.circle(img, (65, 90), 18, (255, 255, 255), -1)
+	cv2.circle(img, (65 + x, 90 + y), 10, (0, 0, 0), -1)
+	cv2.circle(img, (135, 90), 20, (0, 0, 0), -1)
+	cv2.circle(img, (135, 90), 18, (255, 255, 255), -1)
+	cv2.circle(img, (135 + x, 90 + y), 10, (0, 0, 0), -1)
+	cv2.rectangle(img, (65, 134), (135, 136), (100, 100, 100), -1)
 
 def realtimeDetect():
 	# haarcascades = os.path.join(os.environ["HOME"], "/.pyenv/versions/3.6.5/lib/python3.6/site-packages/cv2/data/")
@@ -41,6 +53,15 @@ def realtimeDetect():
 					look = (x, y, w, h)
 					looking_tick = 0
 		cv2.rectangle(img, (look[0], look[1]), (look[0] + look[2], look[1] + look[3]), (0, 0, 255), 2)
+
+		direction = np.array([0, 0])
+		if look != (0, 0, 0, 0):
+			direction[0] = (img.shape[1] / 2) - (look[0] + (look[2] / 2))
+			direction[1] = (img.shape[0] / 2) - (look[1] + (look[3] / 2))
+			direction[1] = -direction[1]
+			direction = direction / 30
+		lookat(img, (int(direction[0]), int(direction[1])))
+
 		cv2.imshow("video image", img)
 		key = cv2.waitKey(10)
 		if key == 27:  # ESCキーで終了
