@@ -25,18 +25,27 @@ def realtimeDetect():
 		ret, img = cap.read()
 		gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 		faces = face_cascade.detectMultiScale(gray, scaleFactor = 1.07, minNeighbors = 5)
-		eyes = None
+		look = (0, 0, 0, 0)
+		looking_tick = 0
 		for x, y, w, h in faces:
+			if look == (0, 0, 0, 0):
+				look = (x, y, w, h)
+				looking_tick = 0
 			cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 2)
 			face = img[y: y + h, x: x + w]
 			face_gray = gray[y: y + h, x: x + w]
 			eyes = eye_cascade.detectMultiScale(face_gray)
 			for (ex, ey, ew, eh) in eyes:
 				cv2.rectangle(face, (ex, ey), (ex + ew, ey + eh), (0, 255, 0), 2)
+				if looking_tick > 1000:
+					look = (x, y, w, h)
+					looking_tick = 0
+		cv2.rectangle(img, (look[0], look[1]), (look[0] + look[2], look[1] + look[3]), (0, 0, 255), 2)
 		cv2.imshow("video image", img)
 		key = cv2.waitKey(10)
 		if key == 27:  # ESCキーで終了
 			break
+		looking_tick += 1
 	cap.release()
 	cv2.destroyAllWindows()
 
